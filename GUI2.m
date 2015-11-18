@@ -1,3 +1,4 @@
+
 function varargout = GUI2(varargin)
 % GUI2 MATLAB code for GUI2.fig
 %      GUI2, by itself, creates a new GUI2 or raises the existing
@@ -57,8 +58,9 @@ handles.output = hObject;
 
 %Load Camera view 
 axes(handles.axes1);
+global vid
 vid=videoinput('macvideo');
-hImage=image(zeros(720,1280,3),'Parent',handles.axes1);
+hImage=image(zeros(720,720,3),'Parent',handles.axes1);
 preview(vid,hImage);
 
 % Update handles structure
@@ -84,6 +86,36 @@ function takePhotoButton_Callback(hObject, eventdata, handles)
 % hObject    handle to takePhotoButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+global vid; % Variable global
+imageTake = getsnapshot(vid);
+imwrite(imageTake, 'takedPhoto.tif');
+I = imread('takedPhoto.tif');
+I2 = imcrop(I,[0 0 720 720]);
+imwrite(I2, 'takedPhoto.tif');
+
+%Load Preview
+I3 = imread('takedPhoto.tif'); %Load photo
+axes(handles.axes2);
+image(I3);
+
+%Load Draw Preview
+convert = rgb2gray(I3);
+BW = im2bw(convert);
+axes(handles.axes3);
+imshow(BW);
+% drawP = graythresh(convert);
+% bw = im2bw(drawP);
+% imwrite(bw, 'photoTransform.tif');
+% I4 = imread('photoTransform.tif'); %Load photo
+% 
+% image(I4);
+
+
+
+% just dialog that we are done capturing
+% warndlg('Listo!');
+% imageTake2 = image(imageTake);
 
 
 % --- Executes on button press in drawButton.
